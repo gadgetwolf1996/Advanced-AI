@@ -1,18 +1,31 @@
-def probOfOne(value, tf):
-    if tf == 1:
-        print("Probability of False: " + str(1 - value))
-    elif tf == 0:
-        print("Probability of True: " + str(1 - value))
+def probOfOne(value):
+    disease = 1.0/float(value)
+    print("The probability of having the disease is " + str(disease))
+    return disease
 
-def probAnB():
-    pass
+def probAnB(a, b):
+    return a*b
 
-def probAgivenB():
-    pass
+def probAgivenB(a, b):
+    return probAnB(a, b) / b
+
+def diseaseProbability():
+    print("Please input the probability of the disease being true")
+    d = input()
+    print("P(t|d) = " + str(probAgivenB(0.99, probOfOne(d))))
 
 def main():
-    probOfOne(0.30, 1)
-    #exit()
+    print("Which task do you want to run?")
+    i = input()
+    if i == "1a":
+        diseaseProbability()
+    elif i == "1b":
+        pass
+    elif i == "2":
+        pass
+    else:
+        print("Input not valid, try again")
+        main()
 
 if __name__ == "__main__":
     main()
