@@ -5,6 +5,9 @@ def probOfOne(value):
     #print("The probability of having the disease is " + str(disease))
     return disease
 
+def calculatingT(value):
+    return ((0.99*value)+((1-0.95)*(1-value)))
+
 def probAnB(a, b):
     return a*b
 
@@ -19,8 +22,12 @@ def notAB(a, b):
 def diseaseProbability():
     print("Please input the probability of the disease being true")
     d = input()
-    print("P(t|d) = " + str(probAgivenB(0.99, probOfOne(d))))
-    print("P(¬t|¬d) = " + str(notAB(0.99, probOfOne(d))))
+    t = calculatingT(probOfOne(d))
+    print("P(t) = " + str(t))
+    print("P(t|d) = " + str(probAgivenB(t, probOfOne(d))))
+    print("P(¬t|¬d) = " + str(notAB(t, probOfOne(d))))
+
+    print("P(d|t) = " + str(probAgivenB(probOfOne(d),t)))
 
 
 #1b
