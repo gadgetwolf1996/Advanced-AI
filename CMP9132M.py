@@ -44,17 +44,22 @@ class Node():
 
 
 def bayes(filename):
+    table = ['n']
     with open(filename, "r") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',') 
         line_count = 0      
         for row in csv_reader:
             line_count += 1
+            for c in row:
+                if(c == '0' or c == '1'):
+                    if(table[0] == 'n'):
+                        table[0] = c
+                    else:
+                        table.append(c)
         print(f'Processed {line_count} lines.')
     
-
+    
     #use len() to work out the titles from the values.
-
-    group = [0,0]
     #group[0] = Node(csv_file["smoking"])
 
 #main
