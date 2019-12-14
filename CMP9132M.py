@@ -41,7 +41,8 @@ class Node():
         self.parents = pa
         self.children = ch
     
-
+def AgivenBandC(a,b,c):
+    return 
 
 def bayes(filename):
     table = ['n']
@@ -58,7 +59,8 @@ def bayes(filename):
                         table.append(c)
         print(f'Processed {line_count} lines.')
     
-    
+
+
     #use len() to work out the titles from the values.
     #group[0] = Node(csv_file["smoking"])
 
