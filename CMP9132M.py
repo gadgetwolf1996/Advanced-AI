@@ -67,10 +67,32 @@ def bayes(filename):
 #2
 class Task2():
     def __init__(self):
-        self.on = [0.4,0.4,0.2]
-        self.off = [0.45,0.45,0.1]
-        self.switch = 0.3
-        self.transition = 0.0
+        #self.on = [0.4,0.4,0.2]
+        #self.off = [0.45,0.45,0.1]
+        #self.switch = 0.3
+        #self.transition = 0.0
+
+        # Initial Probabilities
+        self.h
+        self.w
+        self.c
+        # Transition Probabilities
+        self.hh
+        self.hw
+        self.hc
+        self.ww
+        self.wh
+        self.wc
+        self.cc
+        self.ch
+        self.cw
+        # Emission Probabilities
+        self.onh
+        self.onw
+        self.onc
+        self.offh
+        self.offw
+        self.offc
     
     def start():
         transition = 
