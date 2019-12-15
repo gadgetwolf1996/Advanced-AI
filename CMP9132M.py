@@ -64,6 +64,17 @@ def bayes(filename):
     #use len() to work out the titles from the values.
     #group[0] = Node(csv_file["smoking"])
 
+#2
+class Task2():
+    def __init__(self):
+        self.on = [0.4,0.4,0.2]
+        self.off = [0.45,0.45,0.1]
+        self.switch = 0.3
+        self.transition = 0.0
+    
+    def start():
+        transition = 
+
 #main
 def main():
     print("Which task do you want to run?")
