@@ -71,31 +71,59 @@ class Task2():
         #self.off = [0.45,0.45,0.1]
         #self.switch = 0.3
         #self.transition = 0.0
-
-        # Initial Probabilities
-        self.h
-        self.w
-        self.c
+        
         # Transition Probabilities
-        self.hh
-        self.hw
-        self.hc
-        self.ww
-        self.wh
-        self.wc
-        self.cc
-        self.ch
-        self.cw
+        self.stay = 0.7
+        self.switch = 0.3
+        # Initial Probabilities
+        self.on = 7/10
+        self.off = 3/10
         # Emission Probabilities
-        self.onh
-        self.onw
-        self.onc
-        self.offh
-        self.offw
-        self.offc
+        self.onh = 0.4
+        self.onw = 0.4
+        self.onc = 0.2
+        self.offh = 0.1
+        self.offw = 0.45
+        self.offc = 0.45
+
+        self.sequence = ['C','W','H','W','C']
+        self.probabilities = []
+        self.temperature = []
+
+    def initialise(self):
+        if self.sequence[0] == 'H':
+            self.probabilities.append((self.on*self.onh,self.off*self.offh))
+        elif self.sequence[0] == 'W':
+            self.probabilities.append((self.on*self.onw,self.off*self.offw))
+        else:
+            self.probabilities.append((self.on*self.onc,self.off*self.offc))
+        
+    def calculate(self):
+        for i in range(1, len(self.sequence)):
+            last_on, last_off = self.probabilities[-1]
+            if self.sequence[i] == 'H':
+                this_on = max(last_on*self.stay*self.onh, last_off*self.switch*self.onh)
+                this_off = max(last_on*self.switch*self.offh, last_off*self.stay*self.offh)
+                self.probabilities.append((this_on, this_off))
+            elif self.sequence[i] == 'W':
+                this_on = max(last_on*self.stay*self.onw, last_off*self.switch*self.onw)
+                this_off = max(last_on*self.switch*self.offw, last_off*self.stay*self.offw)
+                self.probabilities.append((this_on, this_off))
+            else:
+                this_on = max(last_on*self.stay*self.onc, last_off*self.switch*self.onc)
+                this_off = max(last_on*self.switch*self.offc, last_off*self.stay*self.offc)
+                self.probabilities.append((this_on, this_off))
+        
+        for p in self.probabilities:
+            if p[0] > p[1]:
+                self.temperature.append('On')
+            else:
+                self.temperature.append('Off')
     
-    def start():
-        transition = 
+    def output(self):
+        print(self.probabilities)
+            
+
 
 #main
 def main():
@@ -107,7 +135,10 @@ def main():
         print("Filename: ")
         bayes(input())
     elif i == "2":
-        pass
+        T2 = Task2()
+        T2.initialise()
+        T2.calculate()
+        T2.output()
     else:
         print("Input not valid, try again")
         main()
