@@ -41,7 +41,7 @@ class Node():
         self.parents = pa
         self.children = ch
     
-def AgivenBandC(a,b,c,colno):
+def AgivenBandC(a,b,c, colno = 1):
     return ((a*b*c)+1)/((b*c)+colno)
 
 def bayes():
@@ -72,17 +72,64 @@ def bayes():
     for f in range(0,len(file)):
         row[count] = file[f]
         if (f+1)%12 == 0:
-            table[count2-1] = [row.copy()]
+            table[count2-1] = row.copy()
             count = 0
             count2 +=1
         else:
             count+=1
 
     #bayes network
-    Smoking = Node("Smoking")
+    #smoking
+    atemp = []
+    btemp = []
+    ctemp = []
+    for x in range(0,1999):
+        atemp.append(table[x][0])
+        btemp.append(table[x][2])
+        ctemp.append(table[x][3])
+    a = sum(atemp)/len(atemp)
+    b = sum(btemp)/len(atemp)
+    c = sum(ctemp)/len(atemp)
+    Smoking = AgivenBandC(a, b, c)
+    print("Smoking: "+str(Smoking))
 
-    AgivenBandC(,2000)
+    #lung cancer
+    atemp.clear()
+    btemp.clear()
+    ctemp.clear()
+    for x in range(0,1999):
+        atemp.append(table[x][11])
+        ctemp.append(table[x][5])
+    a = sum(atemp)/len(atemp)
+    c = sum(ctemp)/len(atemp)
+    LC = AgivenBandC(a, Smoking, c)
+    print("Lung Cancer: "+str(LC))
 
+    #Coughing
+    atemp.clear()
+    btemp.clear()
+    ctemp.clear()
+    for x in range(0,1999):
+        atemp.append(table[x][10])
+        btemp.append(table[x][9])
+    a = sum(atemp)/len(atemp)
+    b = sum(btemp)/len(atemp)
+    Coughing = AgivenBandC(a, b, LC)
+    print("Coughing: "+str(Coughing))
+
+    #Fatigue
+    atemp.clear()
+    btemp.clear()
+    ctemp.clear()
+    for x in range(0,1999):
+        atemp.append(table[x][8])
+    a = sum(atemp)/len(atemp)
+
+    Fatigue = AgivenBandC(a, Coughing, LC)
+    print("Fatigue: "+str(Fatigue))
+    LC2 = AgivenBandC(LC, Coughing, Fatigue,3)
+    print("LC given Coughing and Fatigue: " + str(LC2))
+    print("Smoking given Coughing and Fatigue: " + str((Smoking*LC2)/LC2))
     #use len() to work out the titles from the values.
     #group[0] = Node(csv_file["smoking"])
 
