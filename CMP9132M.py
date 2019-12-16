@@ -41,25 +41,47 @@ class Node():
         self.parents = pa
         self.children = ch
     
-def AgivenBandC(a,b,c):
-    return 
+def AgivenBandC(a,b,c,colno):
+    return ((a*b*c)+1)/((b*c)+colno)
 
-def bayes(filename):
-    table = ['n']
-    with open(filename, "r") as csv_file:
+def bayes():
+    # Setup
+    file = ['2']
+    with open("lucas0_train.csv", "r") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',') 
         line_count = 0      
-        for row in csv_reader:
+        for i in csv_reader:
             line_count += 1
-            for c in row:
+            for c in i:
                 if(c == '0' or c == '1'):
-                    if(table[0] == 'n'):
-                        table[0] = c
+                    if(file[0] == '2'):
+                        file[0] = c
                     else:
-                        table.append(c)
+                        file.append(c)
         print(f'Processed {line_count} lines.')
     
 
+    for i in range(0,len(file)):
+        file[i] = int(file[i])
+
+    row = [0]*12
+    length = int(len(file)/12)
+    table = [row]*length
+    count = 0
+    count2 = 1
+    for f in range(0,len(file)):
+        row[count] = file[f]
+        if (f+1)%12 == 0:
+            table[count2-1] = [row.copy()]
+            count = 0
+            count2 +=1
+        else:
+            count+=1
+
+    #bayes network
+    Smoking = Node("Smoking")
+
+    AgivenBandC(,2000)
 
     #use len() to work out the titles from the values.
     #group[0] = Node(csv_file["smoking"])
@@ -76,32 +98,57 @@ class Task2():
         self.stay = 0.7
         self.switch = 0.3
         # Initial Probabilities
-        self.on = 7/10
-        self.off = 3/10
+        ##self.on = [0.4,0.4,0.2]
+        ##self.off = [0.1,0.45,0.45]
+        self.on = {"Hot": 0.4, "Warm": 0.4, "Cold": 0.2, "Stay": 0.7, "Switch": 0.3}
+        self.off = {"Hot": 0.1, "Warm": 0.45, "Cold": 0.45, "Stay": 0.7, "Switch": 0.3}
         # Emission Probabilities
-        self.onh = 0.4
-        self.onw = 0.4
-        self.onc = 0.2
-        self.offh = 0.1
-        self.offw = 0.45
-        self.offc = 0.45
-
-        self.sequence = ['C','W','H','W','C']
-        self.probabilities = []
-        self.temperature = []
-
-    def initialise(self):
-        if self.sequence[0] == 'H':
-            self.probabilities.append((self.on*self.onh,self.off*self.offh))
-        elif self.sequence[0] == 'W':
-            self.probabilities.append((self.on*self.onw,self.off*self.offw))
-        else:
-            self.probabilities.append((self.on*self.onc,self.off*self.offc))
+        # [on,off]
+        self.em = [[0.4,0.1],[0.4,0.45],[0.2,0.45]]
         
+        self.last_off = 0.0
+        self.sequence = ["Cold","Warm","Hot","Warm","Cold"]
+        self.memory = [[0.0,0.0],[0.0,0.0],[0.0,0.0],[0.0,0.0],[0.0,0.0]]
+        self.probabilities = [0.5,0.5]
+        self.heat = [0.0,0.0]
+
+    def calc(self):
+        for s in self.sequence:
+            #s = self.sequence[i]
+            self.heat[0] = self.off[s] * ((self.off["Stay"]*self.probabilities[0])+(self.off["Switch"]*self.probabilities[1]))
+            #temp1 = self.on[s]
+            #temp2 = self.on["Switch"]
+            #temp3 = self.probabilities[0]
+            #temp4 = self.on["Stay"]
+            #temp5 = self.probabilities[1]
+            self.heat[1] = self.on[s] * ((self.on["Switch"]*self.probabilities[0])+(self.on["Stay"]*self.probabilities[1]))
+            #self.heat[1] = temp1 * ((temp2*temp3)+(temp4*temp5))
+            print(self.heat)
+            self.probabilities = self.heat.copy()
+            ##self.memory.append(self.probabilities.copy())
+        #print(self.memory)
+        print(self.probabilities[0] + self.probabilities[1])
+            
+
+
+    #def initialise(self):
+        #self.probabilities.append((self.on*self.em[self.sequence[0]][0],self.off*self.em[self.sequence[0]][1]))
+
     def calculate(self):
-        for i in range(1, len(self.sequence)):
-            last_on, last_off = self.probabilities[-1]
-            if self.sequence[i] == 'H':
+        for i in range(1,len(self.sequence)-1):
+            last_on, last_off = self.probabilities[i-1]
+
+            this_on = self.stay*self.em[self.sequence[i]][1] + self.switch*self.em[self.sequence[i]][0]
+            this_off = self.switch*self.em[self.sequence[i]][0] + self.stay*self.em[self.sequence[i]][1]
+
+            this_off = last_off * this_off
+            this_on = last_on * this_on
+
+
+
+            self.probabilities.append((this_on, this_off))
+
+            '''if self.sequence[i] == 'H':
                 this_on = max(last_on*self.stay*self.onh, last_off*self.switch*self.onh)
                 this_off = max(last_on*self.switch*self.offh, last_off*self.stay*self.offh)
                 self.probabilities.append((this_on, this_off))
@@ -112,19 +159,12 @@ class Task2():
             else:
                 this_on = max(last_on*self.stay*self.onc, last_off*self.switch*self.onc)
                 this_off = max(last_on*self.switch*self.offc, last_off*self.stay*self.offc)
-                self.probabilities.append((this_on, this_off))
-        
-        for p in self.probabilities:
-            if p[0] > p[1]:
-                self.temperature.append('On')
-            else:
-                self.temperature.append('Off')
+                self.probabilities.append((this_on, this_off))'''
     
     def output(self):
-        print(self.probabilities)
+        print(self.memory)
+        print(self.probabilities[0] + self.probabilities[1])
             
-
-
 #main
 def main():
     print("Which task do you want to run?")
@@ -133,12 +173,10 @@ def main():
         diseaseProbability()
     elif i == "1b":
         print("Filename: ")
-        bayes(input())
+        bayes()
     elif i == "2":
         T2 = Task2()
-        T2.initialise()
-        T2.calculate()
-        T2.output()
+        T2.calc()
     else:
         print("Input not valid, try again")
         main()
